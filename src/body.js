@@ -15,6 +15,10 @@ export const TEMPLATES = {
   estrella: { le: [-1.0, -2.1], lw: [-1.55, -2.65], re: [1.0, -2.1], rw: [1.55, -2.65], lk: [-0.62, 1.0], la: [-0.95, 1.95], rk: [0.62, 1.0], ra: [0.95, 1.95] },
   saludo: { re: [0.8, -2.3], rw: [0.75, -3.0] },
   cintura: { le: [-1.05, -0.85], lw: [-0.38, -0.12], re: [1.05, -0.85], rw: [0.38, -0.12] },
+  cabeza: { le: [-0.95, -2.3], lw: [-0.45, -2.55], re: [0.95, -2.3], rw: [0.45, -2.55] },
+  barriga: { le: [-0.85, -0.95], lw: [-0.12, -0.75], re: [0.85, -0.95], rw: [0.12, -0.75] },
+  palmada: { le: [-0.7, -1.0], lw: [-0.06, -1.35], re: [0.7, -1.0], rw: [0.06, -1.35] },
+  rodillas: { nose: [0, -1.9], ls: [-0.5, -1.25], rs: [0.5, -1.25], le: [-0.62, -0.55], re: [0.62, -0.55], lw: [-0.4, 0.95], rw: [0.4, 0.95] },
   pelota: { nose: [0, -1.25], ls: [-0.5, -0.6], rs: [0.5, -0.6], le: [-0.85, 0.05], re: [0.85, 0.05], lw: [-0.45, 0.6], rw: [0.45, 0.6], lh: [-0.3, 0.75], rh: [0.3, 0.75], lk: [-0.62, 1.15], rk: [0.62, 1.15], la: [-0.4, 2.0], ra: [0.4, 2.0] },
 };
 
@@ -44,6 +48,10 @@ export class Body {
     this.touches = []; // en modo táctil: dedos en pantalla
     this.mode = "camera";
     this.sw = 100;
+    this.motion = 0; // cuánto se mueve (para estatuas)
+    this.flap = 0; // fuerza de aleteo de brazos (para volar)
+    this.prevP = null;
+    this.taps = 0;
   }
 
   /** Modo cámara: landmarks normalizados -> px. */
@@ -54,6 +62,7 @@ export class Body {
       const s = lm[IDX[k]];
       p[k] = { x: map.ox + s.x * map.dw, y: map.oy + s.y * map.dh, v: s.v };
     }
+    this.prevP = this.p && this.mode === "camera" ? this.p : null;
     this.p = p;
     this.mode = "camera";
     this.present = p.ls.v > 0.5 && p.rs.v > 0.5 && p.nose.v > 0.4;
@@ -67,7 +76,10 @@ export class Body {
     const tj = now - action.jumpAt;
     if (tj < 650) lift = Math.sin((tj / 650) * Math.PI) * sw * 1.6;
     if (now - action.duckAt < 900) pose = "pelota";
-    this.p = skeleton(W * 0.5, H * 0.86 - sw * 2.1, sw, action.pose || pose, lift);
+    const cx = action.followX != null ? Math.max(sw * 2, Math.min(W - sw * 2, action.followX)) : W * 0.5;
+    this.p = skeleton(cx, H * 0.86 - sw * 2.1, sw, action.pose || pose, lift);
+    this.motion = now - (action.moveAt || -1e9) < 300 ? 0.2 : 0;
+    this.flap = 0;
     this.mode = "touch";
     this.present = true;
     this.jumping = tj < 650;
@@ -96,6 +108,15 @@ export class Body {
     this.ducking = sh.y > b.shY + 0.33 * torso;
     if (this.jumping && !wasJ) { this.lastJump = now; this.jumps++; }
     if (this.ducking && !wasD) this.lastDuck = now;
+    // movimiento y aleteo
+    const q = this.prevP;
+    if (q) {
+      let m = 0, n = 0;
+      for (const k of ["nose", "lw", "rw", "le", "re", "ls", "rs", "lh", "rh", "lk", "rk"]) if (p[k].v > 0.5 && q[k]) { m += dist(p[k], q[k]); n++; }
+      this.motion = this.motion * 0.8 + (n ? m / n / this.sw : 0) * 0.2;
+      const down = ((p.lw.y - q.lw.y) + (p.rw.y - q.rw.y)) / 2 / this.sw;
+      this.flap = this.flap * 0.7 + Math.max(0, down) * 0.3;
+    }
     // la línea base se adapta despacio cuando está de pie (si se acerca o se aleja)
     if (!this.jumping && !this.ducking) {
       const k = hip.y > b.hipY ? 0.08 : 0.03;
@@ -152,6 +173,18 @@ export class Body {
       }
       case "pelota":
         return this.ducking;
+      case "cabeza":
+        return ["lw", "rw"].some((w) => p[w].v > 0.4 && dist(p[w], p.nose) < 1.0 * sw && p[w].y < shY);
+      case "barriga": {
+        const c = this.center();
+        return ["lw", "rw"].some((w) => p[w].v > 0.4 && dist(p[w], c) < 0.75 * sw);
+      }
+      case "palmada":
+        return p.lw.v > 0.4 && p.rw.v > 0.4 && dist(p.lw, p.rw) < 0.55 * sw && p.lw.y < (p.lh.y + shY) / 2 + sw;
+      case "rodillas":
+        return (p.lw.v > 0.4 && p.lk.v > 0.4 && dist(p.lw, p.lk) < 0.9 * sw) || (p.rw.v > 0.4 && p.rk.v > 0.4 && dist(p.rw, p.rk) < 0.9 * sw);
+      case "salta":
+        return this.jumping;
       default:
         return false;
     }

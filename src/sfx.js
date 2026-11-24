@@ -48,6 +48,7 @@ export const jump = () => tone(300, 0, 0.25, { type: "square", vol: 0.08, slide:
 export const whoosh = () => tone(900, 0, 0.3, { type: "sawtooth", vol: 0.04, slide: -700 });
 export const tick = (n = 0) => tone(500 + n * 60, 0, 0.1, { type: "square", vol: 0.07 });
 export const star = () => { tone(1320, 0, 0.12, { type: "sine", vol: 0.15 }); tone(1760, 0.07, 0.18, { type: "sine", vol: 0.12 }); };
+export const drum = (f) => { tone(f, 0, 0.35, { type: "triangle", vol: 0.3 }); tone(f / 2, 0, 0.25, { type: "sine", vol: 0.3, slide: -f / 4 }); tone(120, 0, 0.12, { type: "square", vol: 0.05, slide: -60 }); };
 export const fanfare = () => {
   [392, 523, 659, 784, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.12, 0.3, { vol: 0.18 }));
   [196, 262, 330].forEach((f, i) => tone(f, i * 0.36, 0.5, { type: "sine", vol: 0.12 }));

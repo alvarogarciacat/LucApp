@@ -10,8 +10,16 @@ import bubbles from "./games/bubbles.js";
 import fruits from "./games/fruits.js";
 import runner from "./games/runner.js";
 import wall from "./games/wall.js";
+import { formas, animales, cuenta, dados, nombre } from "./games/picks.js";
+import { topos, tambores, portero, ventana, estirate } from "./games/arcade.js";
+import { lucadice, estatuas, baila, ranita, vuela, esquiva, esqui } from "./games/moves.js";
 
-const GAMES = [bubbles, fruits, runner, wall];
+// ordenados de más tranquilos (aprender tocando) a más movidos (todo el cuerpo)
+const GAMES = [
+  bubbles, formas, animales, cuenta, dados, nombre, fruits,
+  topos, tambores, ventana, estirate, portero,
+  lucadice, baila, estatuas, runner, ranita, vuela, esquiva, esqui, wall,
+];
 const $ = (id) => document.getElementById(id);
 
 // ---------- guardado ----------
@@ -39,6 +47,7 @@ const body = new Body();
 const particles = new Particles();
 const touchAct = { jumpAt: -1e9, duckAt: -1e9, pose: null };
 let phase = "menu"; // menu | loading | calib | play | results
+let lastCalibAt = -1e9, calibNeed = 1200;
 let gameDef = null, game = null, earned = 0, calibOk = 0, lostSince = 0, happyUntil = 0, lastNag = 0, startedAt = 0;
 
 const app = {
@@ -51,6 +60,7 @@ const app = {
     particles.burst(x, y, 20, 14);
   },
   happy() { happyUntil = performance.now() + 1500; },
+  music(on) { sfx.music(on); },
   finish() { endGame(); },
 };
 
@@ -122,8 +132,13 @@ window.addEventListener("keydown", (e) => {
 
 // dedos en pantalla (modo táctil)
 const pointers = new Map();
-cv.addEventListener("pointerdown", (e) => { sfx.unlock(); pointers.set(e.pointerId, { x: e.clientX, y: e.clientY }); });
-cv.addEventListener("pointermove", (e) => { if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY }); });
+cv.addEventListener("pointerdown", (e) => { sfx.unlock(); pointers.set(e.pointerId, { x: e.clientX, y: e.clientY }); body.taps++; touchAct.followX = e.clientX; });
+cv.addEventListener("pointermove", (e) => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  touchAct.moveAt = performance.now();
+  touchAct.followX = e.clientX;
+});
 const up = (e) => pointers.delete(e.pointerId);
 cv.addEventListener("pointerup", up);
 cv.addEventListener("pointercancel", up);
@@ -171,16 +186,20 @@ async function startGame(gd) {
   }
   show("play");
   const touch = store.mode !== "camera";
-  $("jumpBtn").hidden = $("duckBtn").hidden = !(touch && gd.id === "selva");
+  $("jumpBtn").hidden = $("duckBtn").hidden = true;
+  touchAct.followX = null;
   $("pip").hidden = touch;
-  sfx.music(true);
+  if (!gd.quiet) sfx.music(true);
   if (touch) beginPlay();
   else {
     phase = "calib";
     calibOk = 0;
     lastNag = 0;
     body.resetBase();
-    say("¡Hola, Luca! Ponte delante del móvil, que te vea entero, de la cabeza a los pies.");
+    const recent = performance.now() - lastCalibAt < 180000;
+    calibNeed = recent ? 300 : 1200;
+    lastNag = recent ? performance.now() : 0;
+    if (!recent) say("¡Hola, Luca! Ponte delante del móvil, que te vea entero, de la cabeza a los pies.");
   }
 }
 
@@ -193,6 +212,9 @@ function beginPlay() {
   setTimeout(() => {
     if (phase !== "play") return;
     game = gameDef.create(app);
+    const acts = (store.mode !== "camera" && (game.touchActions || gameDef.touchActions)) || [];
+    $("jumpBtn").hidden = !acts.includes("jump");
+    $("duckBtn").hidden = !acts.includes("duck");
   }, 2600);
 }
 
@@ -261,6 +283,7 @@ function frame(now) {
     const lm = tracker.update(now);
     body.fromLandmarks(lm, tracker.coverMap(W, H), now);
   } else {
+    if (!(game?.touchFollow || gameDef?.touchFollow)) touchAct.followX = null;
     body.fromTouch(W, H, now, touchAct);
   }
   body.touches = [...pointers.values()];
@@ -287,11 +310,12 @@ function frame(now) {
       $("nText").textContent = s.text;
       if (s.ok) {
         calibOk += dt;
-        if (calibOk > 1200) {
+        if (calibOk > calibNeed) {
           $("notice").hidden = true;
-          sfx.good();
-          say("¡Perfecto! ¡Te veo!");
-          setTimeout(beginPlay, 900);
+          const quick = calibNeed < 1200;
+          lastCalibAt = now;
+          if (!quick) { sfx.good(); say("¡Perfecto! ¡Te veo!"); }
+          setTimeout(beginPlay, quick ? 0 : 900);
           phase = "calib-done";
         }
       } else {
@@ -317,8 +341,11 @@ function frame(now) {
       game?.draw?.(g, now, body);
     }
     // el avatar de Luca
-    if (body.present && body.p) drawAvatar(g, body.p, charObj(), now, { happy: now < happyUntil, alpha: phase === "play" ? 1 : 0.95 });
-    if (phase === "play") game?.drawFront?.(g, now, body);
+    const front = phase === "play" && game?.drawFront;
+    const onTop = game?.avatarOnTop || gameDef?.avatarOnTop;
+    if (front && onTop) game.drawFront(g, now, body);
+    if (body.present && body.p && !(phase === "play" && gameDef?.hideAvatar)) drawAvatar(g, body.p, charObj(), now, { happy: now < happyUntil, alpha: phase === "play" ? (game?.avatarAlpha || 1) : 0.95 });
+    if (front && !onTop) game.drawFront(g, now, body);
     // dedos
     if (store.mode !== "camera") {
       for (const t of body.touches) {

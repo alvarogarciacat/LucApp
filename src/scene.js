@@ -138,3 +138,78 @@ export function magic(g, W, H, t) {
 export function menuBg(g, W, H, t) {
   orchard(g, W, H, t);
 }
+
+export function snow(g, W, H, t, scroll = 0) {
+  const gr = g.createLinearGradient(0, 0, 0, H);
+  gr.addColorStop(0, "#9fd4ff");
+  gr.addColorStop(1, "#eaf6ff");
+  g.fillStyle = gr;
+  g.fillRect(0, 0, W, H);
+  g.fillStyle = "#cfe6f7";
+  g.beginPath(); g.moveTo(0, H * 0.4); g.lineTo(W * 0.25, H * 0.12); g.lineTo(W * 0.5, H * 0.4); g.lineTo(W * 0.75, H * 0.18); g.lineTo(W, H * 0.4); g.lineTo(W, H); g.lineTo(0, H); g.fill();
+  g.fillStyle = "#ffffff";
+  g.fillRect(0, H * 0.4, W, H * 0.6);
+  // pinos que suben al bajar
+  const r = rnd(5);
+  for (let i = 0; i < 10; i++) {
+    const x = r() < 0.5 ? r() * W * 0.12 : W - r() * W * 0.12;
+    const y = ((r() * H * 1.5 - scroll) % (H * 1.5) + H * 1.5) % (H * 1.5) - H * 0.2;
+    g.fillStyle = "#2f7a4f";
+    g.beginPath(); g.moveTo(x, y - 50); g.lineTo(x + 28, y + 20); g.lineTo(x - 28, y + 20); g.fill();
+  }
+  g.fillStyle = "rgba(255,255,255,.8)";
+  for (let i = 0; i < 40; i++) { const x = (i * 97 + t / 20) % W, y = (i * 53 + t / 8) % H; g.fillRect(x, y, 3, 3); }
+}
+
+export function pond(g, W, H, t) {
+  const gr = g.createLinearGradient(0, 0, 0, H);
+  gr.addColorStop(0, "#bde9ff");
+  gr.addColorStop(0.45, "#8fdc8a");
+  gr.addColorStop(0.46, "#3fb3c9");
+  gr.addColorStop(1, "#1f7fa8");
+  g.fillStyle = gr;
+  g.fillRect(0, 0, W, H);
+  g.strokeStyle = "rgba(255,255,255,.25)";
+  g.lineWidth = 3;
+  for (let i = 0; i < 8; i++) { const y = H * 0.55 + i * H * 0.06; g.beginPath(); g.moveTo(((i * 131 + t / 30) % W), y); g.lineTo(((i * 131 + t / 30) % W) + 60, y); g.stroke(); }
+}
+
+export function meadow(g, W, H, t) {
+  orchard(g, W, H, t);
+}
+
+export function skyfly(g, W, H, t, scroll) {
+  const gr = g.createLinearGradient(0, 0, 0, H);
+  gr.addColorStop(0, "#5ab8ff");
+  gr.addColorStop(1, "#ffe2b8");
+  g.fillStyle = gr;
+  g.fillRect(0, 0, W, H);
+  const r = rnd(9);
+  for (let i = 0; i < 8; i++) {
+    const x = ((r() * W * 2 - scroll * (0.3 + r() * 0.4)) % (W * 2) + W * 2) % (W * 2) - 200;
+    cloud(g, x, r() * H * 0.8, 30 + r() * 30);
+  }
+  hills(g, W, H, H * 0.9, H * 0.03, "#6cc46a", scroll * 0.5);
+}
+
+export function stage(g, W, H, t, lit = true) {
+  g.fillStyle = "#2a1640";
+  g.fillRect(0, 0, W, H);
+  const cols = ["#ff5d8f", "#ffc93c", "#5ad1ff", "#3ccf7a"];
+  if (lit) for (let i = 0; i < 4; i++) {
+    const x = W * (0.15 + i * 0.23), sw = Math.sin(t / 600 + i) * W * 0.1;
+    g.fillStyle = cols[i] + "40";
+    g.beginPath(); g.moveTo(x - 20, 0); g.lineTo(x + 20, 0); g.lineTo(x + sw + W * 0.12, H); g.lineTo(x + sw - W * 0.12, H); g.fill();
+  }
+  g.fillStyle = "#4a2a6a";
+  g.fillRect(0, H * 0.85, W, H * 0.15);
+  g.fillStyle = "#b8324f";
+  g.fillRect(0, 0, W * 0.06, H); g.fillRect(W * 0.94, 0, W * 0.06, H);
+}
+
+export function room(g, W, H, t) {
+  g.fillStyle = "#ffe9c7";
+  g.fillRect(0, 0, W, H);
+  g.fillStyle = "#c98f4f";
+  g.fillRect(0, H * 0.88, W, H * 0.12);
+}

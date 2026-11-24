@@ -2,14 +2,43 @@
 
 Juegos para moverse delante de la cámara, para niños de unos 5 años. La cámara del móvil o del ordenador ve el cuerpo entero (cabeza, brazos y piernas) y lo convierte en un personaje de dibujos. No hace falta saber leer: una voz en español explica cada cosa y la pantalla lo enseña con dibujos grandes.
 
-## Juegos
+## Juegos (21)
+
+**Aprender tocando** (con las manos, delante de la cámara)
 
 | Juego | Qué hace el niño | Qué aprende |
 |---|---|---|
-| 🫧 Burbujas | Explota con las manos o los pies la burbuja que dice la voz | Números del 1 al 10, letras y colores |
-| 🍎 Frutas | Atrapa con las manos las frutas que le piden ("¡Atrapa tres fresas!") | Contar y reconocer frutas |
-| 🌴 Selva | Salta los troncos, se agacha bajo las ramas y estira los brazos para coger estrellas | Coordinación y contar saltos |
-| 🧱 Muro mágico | Copia la postura del dibujo (árbol, avión, estrella…) para atravesar el muro | Esquema corporal y equilibrio |
+| 🫧 Burbujas | Explota la burbuja que dice la voz | Números, letras, colores |
+| 🔺 Formas | Toca la forma que le piden | Círculo, cuadrado, triángulo, estrella, corazón, rombo |
+| 🐮 Animales | Toca el animal por su nombre o por su sonido ("¿quién hace muuu?") | Animales y sus sonidos |
+| 🔢 Cuenta | Cuenta los dibujos y toca el número | Contar hasta 6 |
+| 🎲 Dados | Toca el dado con X puntos | Reconocer cantidades |
+| 🔤 Mi nombre | Toca las letras en orden: L-U-C-A, M-A-M-A, P-A-P-A, S-O-L | Sus primeras letras |
+| 🍎 Frutas | Atrapa las frutas que le piden mientras caen | Contar y frutas |
+
+**Arcade**
+
+| Juego | Qué hace el niño |
+|---|---|
+| 🐹 Topos | Da a los topos que salen de los agujeros |
+| 🥁 Tambores | Repite la secuencia de colores y sonidos (memoria) |
+| 🪟 Ventana | Frota la ventana sucia para descubrir el animal que hay detrás |
+| 🌟 Estírate | Coge estrellas muy arriba, abajo con el pie y a los lados |
+| ⚽ Portero | Para los balones con manos o pies |
+
+**Todo el cuerpo**
+
+| Juego | Qué hace el niño |
+|---|---|
+| 🙋 Luca dice | Tócate la cabeza, la barriga, las rodillas, da una palmada, salta… |
+| 🕺 Baila | Copia los pasos de baile al ritmo |
+| 🗿 Estatuas | Baila con la música y se queda quieto cuando para |
+| 🌴 Selva | Salta troncos, se agacha bajo ramas y coge estrellas |
+| 🐸 Ranita | Salta X veces para que la rana cruce el estanque |
+| 🐦 Vuela | Mueve los brazos como alas para volar y coger estrellas |
+| ☃️ Esquiva | Se mueve a los lados para esquivar bolas de nieve |
+| ⛷️ Esquí | Se mueve hacia la puerta del color que le piden |
+| 🧱 Muro mágico | Copia la postura del dibujo para atravesar el muro |
 
 Nunca se pierde. Si se atasca, la burbuja correcta brilla, el obstáculo espera y la voz le vuelve a explicar qué hacer. Las estrellas desbloquean personajes: Dino, Robot (10★), Astronauta (25★) y Superhéroe (50★).
 
