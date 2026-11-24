@@ -24,8 +24,8 @@ const $ = (id) => document.getElementById(id);
 
 // ---------- guardado ----------
 const store = { stars: 0, char: "dino", mode: "camera", sound: true, view: "avatar" };
-try { Object.assign(store, JSON.parse(localStorage.getItem("luca-move") || "{}")); } catch (e) {}
-const save = () => { try { localStorage.setItem("luca-move", JSON.stringify(store)); } catch (e) {} };
+try { Object.assign(store, JSON.parse(localStorage.getItem("lucapp") || localStorage.getItem("luca-move") || "{}")); } catch (e) {}
+const save = () => { try { localStorage.setItem("lucapp", JSON.stringify(store)); } catch (e) {} };
 const charObj = () => CHARACTERS.find((c) => c.id === store.char) || CHARACTERS[0];
 const showStars = () => document.querySelectorAll(".starCount").forEach((e) => (e.textContent = store.stars));
 

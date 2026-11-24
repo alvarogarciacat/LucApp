@@ -1,6 +1,6 @@
 {
-  "name": "Luca en Movimiento",
-  "short_name": "Luca Move",
+  "name": "LucApp",
+  "short_name": "LucApp",
   "description": "Juegos de moverse con la cámara para aprender números, colores, letras y posturas.",
   "lang": "es",
   "start_url": "./",

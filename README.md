@@ -1,4 +1,4 @@
-# Luca en Movimiento
+# LucApp
 
 Juegos para moverse delante de la cámara, para niños de unos 5 años. La cámara del móvil o del ordenador ve el cuerpo entero (cabeza, brazos y piernas) y lo convierte en un personaje de dibujos. No hace falta saber leer: una voz en español explica cada cosa y la pantalla lo enseña con dibujos grandes.
 
