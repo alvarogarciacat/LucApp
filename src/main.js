@@ -23,7 +23,7 @@ const GAMES = [
 const $ = (id) => document.getElementById(id);
 
 // ---------- guardado ----------
-const store = { stars: 0, char: "dino", mode: "camera", sound: true };
+const store = { stars: 0, char: "dino", mode: "camera", sound: true, view: "avatar" };
 try { Object.assign(store, JSON.parse(localStorage.getItem("luca-move") || "{}")); } catch (e) {}
 const save = () => { try { localStorage.setItem("luca-move", JSON.stringify(store)); } catch (e) {} };
 const charObj = () => CHARACTERS.find((c) => c.id === store.char) || CHARACTERS[0];
@@ -91,6 +91,8 @@ function buildMenu() {
     pickEl.append(b);
   }
   $("modeBtn").textContent = store.mode === "camera" ? "📷 Cámara" : "👆 Con el dedo";
+  $("viewBtn").textContent = store.view === "mirror" ? "🪞 Espejo" : "🦖 Muñeco";
+  $("viewBtn").hidden = store.mode !== "camera";
   $("soundBtn").textContent = store.sound ? "🔊" : "🔇";
   $("soundBtn").setAttribute("aria-pressed", String(store.sound));
   showStars();
@@ -109,6 +111,11 @@ function drawCharPreview(canvas, ch, t) {
 }
 
 $("modeBtn").onclick = () => { sfx.unlock(); store.mode = store.mode === "camera" ? "touch" : "camera"; save(); buildMenu(); say(store.mode === "camera" ? "Jugar con la cámara" : "Jugar con el dedo"); };
+$("viewBtn").onclick = () => {
+  sfx.unlock();
+  store.view = store.view === "mirror" ? "avatar" : "mirror"; save(); buildMenu();
+  say(store.view === "mirror" ? "¡Te verás a ti mismo en la pantalla!" : "¡Serás un muñeco!");
+};
 $("soundBtn").onclick = () => { store.sound = !store.sound; save(); sfx.setSound(store.sound); setMuted(!store.sound); buildMenu(); };
 $("fsBtn").onclick = async () => {
   try { if (!document.fullscreenElement) await document.documentElement.requestFullscreen(); else await document.exitFullscreen(); } catch (e) {}
@@ -188,7 +195,7 @@ async function startGame(gd) {
   const touch = store.mode !== "camera";
   $("jumpBtn").hidden = $("duckBtn").hidden = true;
   touchAct.followX = null;
-  $("pip").hidden = touch;
+  $("pip").hidden = touch || store.view === "mirror";
   if (!gd.quiet) sfx.music(true);
   if (touch) beginPlay();
   else {
@@ -299,6 +306,16 @@ function frame(now) {
     // fondo del mundo
     if (game?.drawBack) game.drawBack(g, now);
     else menuBg(g, W, H, now);
+    // modo espejo: la imagen real de la cámara encima del fondo del mundo
+    const mirror = store.mode === "camera" && store.view === "mirror" && tracker.ready;
+    if (mirror) {
+      const mp = tracker.coverMap(W, H);
+      g.save();
+      g.globalAlpha = 0.78;
+      g.translate(W, 0); g.scale(-1, 1);
+      try { g.drawImage(tracker.video, W - mp.ox - mp.dw, mp.oy, mp.dw, mp.dh); } catch (e) {}
+      g.restore();
+    }
 
     if (phase === "calib") {
       const s = calibState();
@@ -344,7 +361,13 @@ function frame(now) {
     const front = phase === "play" && game?.drawFront;
     const onTop = game?.avatarOnTop || gameDef?.avatarOnTop;
     if (front && onTop) game.drawFront(g, now, body);
-    if (body.present && body.p && !(phase === "play" && gameDef?.hideAvatar)) drawAvatar(g, body.p, charObj(), now, { happy: now < happyUntil, alpha: phase === "play" ? (game?.avatarAlpha || 1) : 0.95 });
+    if (mirror && body.present) {
+      // en espejo solo se marcan las manos (y pies) para saber con qué se toca
+      for (const hnd of body.hitters(true)) {
+        g.save(); g.strokeStyle = "#ffc93c"; g.lineWidth = 6; g.fillStyle = "rgba(255,201,60,.35)";
+        g.beginPath(); g.arc(hnd.x, hnd.y, hnd.r * 0.8, 0, 7); g.fill(); g.stroke(); g.restore();
+      }
+    } else if (body.present && body.p && !(phase === "play" && gameDef?.hideAvatar)) drawAvatar(g, body.p, charObj(), now, { happy: now < happyUntil, alpha: phase === "play" ? (game?.avatarAlpha || 1) : 0.95 });
     if (front && !onTop) game.drawFront(g, now, body);
     // dedos
     if (store.mode !== "camera") {
