@@ -63,17 +63,11 @@ En el móvil, la cámara solo funciona con HTTPS. Para probar en local desde el 
 
 ## Publicar
 
-El código está en este repositorio **privado**. La web se publica en un repositorio **público** aparte, `lucapp-web`, que solo contiene la app ya construida.
+La web se publica con GitHub Pages desde este mismo repositorio. Cada push a `main` la vuelve a publicar automáticamente.
 
-Configuración (una sola vez):
+Configuración (una sola vez): *Settings → Pages → Source: GitHub Actions*.
 
-1. Crea el repositorio público `lucapp-web`, vacío.
-2. Crea un token de acceso: *GitHub → Settings → Developer settings → Fine-grained tokens*. Dale acceso solo a `lucapp-web`, con el permiso *Contents: Read and write*.
-3. En este repositorio, en *Settings → Secrets and variables → Actions*, crea el secreto `DEPLOY_TOKEN` con ese token.
-4. Lanza la Action "Publicar la web". Después, en `lucapp-web`, ve a *Settings → Pages → Deploy from a branch → gh-pages / (root)*.
-5. La app queda en `https://<usuario>.github.io/lucapp-web/`.
-
-Cada push a `main` vuelve a publicarla automáticamente.
+La app queda en https://alvarogarciacat.github.io/LucApp/
 
 **Firebase Hosting** (alternativa):
 
