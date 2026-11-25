@@ -65,7 +65,7 @@ En el móvil, la cámara solo funciona con HTTPS. Para probar en local desde el 
 
 La web se publica con GitHub Pages desde este mismo repositorio. Cada push a `main` la vuelve a publicar automáticamente.
 
-Configuración (una sola vez): *Settings → Pages → Source: GitHub Actions*.
+La Action deja la app construida en la rama `gh-pages`. Configuración (una sola vez): *Settings → Pages → Deploy from a branch → gh-pages / (root)*.
 
 La app queda en https://alvarogarciacat.github.io/LucApp/
 
