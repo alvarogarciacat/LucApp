@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <title>LucApp</title>
+  <meta name="theme-color" content="#2f6fe4">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap">
+  <script type="module" crossorigin src="./assets/index-DieNPUbY.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BacnZ4m6.css">
+</head>
+<body>
+  <canvas id="cv"></canvas>
+  <video id="video" playsinline muted></video>
+
+  <!-- MENÚ -->
+  <section id="menu" class="screen">
+    <header class="m-top">
+      <h1>Luc<span>App</span></h1>
+      <div class="stars" aria-label="Estrellas"><span>★</span> <b class="starCount">0</b></div>
+    </header>
+    <div class="m-body">
+      <div class="m-char">
+        <canvas id="charCv" width="360" height="440" aria-label="Personaje elegido"></canvas>
+        <div class="char-pick" id="charPick"></div>
+      </div>
+      <div class="games" id="games"></div>
+    </div>
+    <footer class="m-bottom">
+      <button id="modeBtn" class="pill" aria-pressed="true">📷 Cámara</button>
+      <button id="viewBtn" class="pill">🦖 Muñeco</button>
+      <button id="soundBtn" class="pill" aria-pressed="true">🔊</button>
+      <button id="fsBtn" class="pill" aria-label="Pantalla completa">⛶</button>
+      <button id="helpBtn" class="pill">Ayuda para mayores</button>
+    </footer>
+  </section>
+
+  <!-- JUEGO -->
+  <section id="play" class="screen" hidden>
+    <div class="p-top">
+      <button class="round home" id="homeBtn" aria-label="Volver al menú">🏠</button>
+      <div id="card" class="card" hidden></div>
+      <div class="stars"><span>★</span> <b class="starCount">0</b></div>
+    </div>
+    <div id="notice" class="notice" hidden><div class="n-icon" id="nIcon">👀</div><div class="n-text" id="nText"></div></div>
+    <div class="p-bottom">
+      <button class="round big" id="jumpBtn" aria-label="Saltar" hidden>⬆</button>
+      <button class="round speak" id="repeatBtn" aria-label="Escuchar otra vez">🔊</button>
+      <button class="round big" id="duckBtn" aria-label="Agacharse" hidden>⬇</button>
+    </div>
+    <div id="pip" class="pip"></div>
+  </section>
+
+  <!-- CARGANDO -->
+  <section id="loading" class="screen overlay" hidden>
+    <div class="spinner">✨</div>
+    <p id="loadText">Preparando la cámara mágica…</p>
+  </section>
+
+  <!-- RESULTADO -->
+  <section id="results" class="screen overlay" hidden>
+    <div class="r-stars" id="rStars">★★★</div>
+    <p class="r-num"><span>+</span><b id="rCount">0</b> <span class="r-star">★</span></p>
+    <div id="unlock" class="unlock" hidden>
+      <canvas id="unlockCv" width="240" height="300"></canvas>
+      <p>¡Nuevo personaje!</p>
+    </div>
+    <div class="r-btns">
+      <button class="round big again" id="againBtn" aria-label="Jugar otra vez">↻</button>
+      <button class="round big" id="menuBtn" aria-label="Volver al menú">🏠</button>
+    </div>
+  </section>
+
+  <!-- AYUDA -->
+  <section id="help" class="screen overlay help" hidden>
+    <div class="h-box">
+      <h2>Cómo se juega</h2>
+      <ol>
+        <li><b>Pon el móvil de pie</b>, en horizontal, apoyado en una mesa o estantería a la altura de la cintura de Luca.</li>
+        <li><b>Luca se pone a 2 o 3 pasos</b>, para que la cámara le vea entero, de la cabeza a los pies.</li>
+        <li><b>Mucha luz</b> y que no haya otra persona detrás moviéndose.</li>
+        <li><b>En la tele:</b> duplica la pantalla del móvil (Chromecast, Smart View, AirPlay…). Queda como una consola.</li>
+        <li>Sin cámara, se juega con el dedo: botón <b>📷 Cámara</b> del menú.</li>
+      </ol>
+      <p class="h-small">La cámara se procesa solo dentro del móvil. No se graba ni se envía ninguna imagen.</p>
+      <button class="pill" id="helpClose">Entendido</button>
+    </div>
+  </section>
+
+</body>
+</html>
